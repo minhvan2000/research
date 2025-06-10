@@ -1,0 +1,10 @@
+@url=http://localhost:9090/api/customers
+
+POST {{url}}/1/orders HTTP/1.1
+Content-Type: "application/json"
+
+[
+    {"ID": "1", "Quantity": 2},
+    {"ID": "1", "Quantity": 1},
+    {"ID": "3", "Quantity": 2}
+]

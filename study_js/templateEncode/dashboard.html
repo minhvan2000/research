@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-time Monitoring Dashboard</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom CSS -->
+    <style>
+        /* Base styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar styles */
+        .sidebar {
+            min-height: 100vh;
+            background: #343a40;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                z-index: 1000;
+                width: 250px;
+                transform: translateX(-100%);
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255,255,255,.75);
+            padding: 0.8rem 1rem;
+            transition: all 0.3s;
+        }
+
+        .sidebar .nav-link:hover {
+            color: #fff;
+            background: rgba(255,255,255,.1);
+        }
+
+        .sidebar .nav-link.active {
+            color: #fff;
+            background: rgba(255,255,255,.1);
+        }
+
+        /* Main content styles */
+        .main-content {
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        @media (min-width: 768px) {
+            .main-content {
+                margin-left: 250px;
+            }
+        }
+
+        /* Card styles */
+        .card {
+            margin-bottom: 20px;
+            box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075);
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card {
+            border-left: 4px solid #0d6efd;
+        }
+
+        /* Chart container */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        @media (max-width: 576px) {
+            .chart-container {
+                height: 250px;
+            }
+        }
+
+        /* Status badges */
+        .status-badge {
+            font-size: 0.8rem;
+            padding: 0.5em 0.8em;
+        }
+
+        /* Mobile menu button */
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 1001;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+
+        /* Table responsiveness */
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Status cards grid */
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        /* Loading spinner */
+        .loading-spinner {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1002;
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Menu Button -->
+    <button class="btn btn-primary mobile-menu-btn" id="mobileMenuBtn">
+        <i class="bi bi-list"></i> Menu
+    </button>
+
+    <!-- Loading Spinner -->
+    <div class="spinner-border text-primary loading-spinner" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar p-3" id="sidebar">
+                <h3 class="text-white mb-4">Dashboard</h3>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#overview">
+                            <i class="bi bi-speedometer2"></i> Overview
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#power">
+                            <i class="bi bi-lightning-charge"></i> Power Analysis
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#system">
+                            <i class="bi bi-gear"></i> System Status
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#settings">
+                            <i class="bi bi-sliders"></i> Settings
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 main-content">
+                <h2 class="mb-4">Real-time Monitoring</h2>
+                
+                <!-- Status Cards -->
+                <div class="status-grid mb-4">
+                    <div class="card stat-card">
+                        <div class="card-body">
+                            <h5 class="card-title">Voltage</h5>
+                            <h2 class="card-text" id="voltage">226.190V</h2>
+                            <p class="text-muted">Current Reading</p>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="card-body">
+                            <h5 class="card-title">Current</h5>
+                            <h2 class="card-text" id="current">0.090A</h2>
+                            <p class="text-muted">Current Reading</p>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="card-body">
+                            <h5 class="card-title">Power</h5>
+                            <h2 class="card-text" id="power">8.790W</h2>
+                            <p class="text-muted">Current Reading</p>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="card-body">
+                            <h5 class="card-title">Energy</h5>
+                            <h2 class="card-text" id="energy">0.000kWh</h2>
+                            <p class="text-muted">Total Consumption</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Power Consumption Trend</h5>
+                                <div class="chart-container">
+                                    <canvas id="powerChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Voltage & Current</h5>
+                                <div class="chart-container">
+                                    <canvas id="voltageCurrentChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Status -->
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">System Status</h5>
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Component</th>
+                                                <th>Status</th>
+                                                <th>Value</th>
+                                                <th>Last Update</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Light Control</td>
+                                                <td><span class="badge bg-success status-badge" id="lightStatus">Active</span></td>
+                                                <td id="lightValue">0%</td>
+                                                <td id="lightUpdate">Just now</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Relay</td>
+                                                <td><span class="badge bg-danger status-badge" id="relayStatus">OFF</span></td>
+                                                <td id="relayValue">OFF</td>
+                                                <td id="relayUpdate">Just now</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Control Source</td>
+                                                <td><span class="badge bg-info status-badge" id="sourceStatus">Command</span></td>
+                                                <td id="sourceValue">Command</td>
+                                                <td id="sourceUpdate">Just now</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(event.target) && 
+                !mobileMenuBtn.contains(event.target)) {
+                sidebar.classList.remove('active');
+            }
+        });
+
+        // Initialize charts
+        const powerCtx = document.getElementById('powerChart').getContext('2d');
+        const voltageCurrentCtx = document.getElementById('voltageCurrentChart').getContext('2d');
+
+        const powerChart = new Chart(powerCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Power (W)',
+                    data: [],
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                }
+            }
+        });
+
+        const voltageCurrentChart = new Chart(voltageCurrentCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                    {
+                        label: 'Voltage (V)',
+                        data: [],
+                        borderColor: 'rgb(255, 99, 132)',
+                        tension: 0.1
+                    },
+                    {
+                        label: 'Current (A)',
+                        data: [],
+                        borderColor: 'rgb(54, 162, 235)',
+                        tension: 0.1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                }
+            }
+        });
+
+        // Simulate real-time data updates
+        function updateDashboard() {
+            // Show loading spinner
+            document.querySelector('.loading-spinner').style.display = 'block';
+
+            // Update status cards
+            document.getElementById('voltage').textContent = '226.190V';
+            document.getElementById('current').textContent = '0.090A';
+            document.getElementById('power').textContent = '8.790W';
+            document.getElementById('energy').textContent = '0.000kWh';
+
+            // Update charts
+            const now = new Date();
+            const timeLabel = now.toLocaleTimeString();
+            
+            // Add new data point
+            powerChart.data.labels.push(timeLabel);
+            powerChart.data.datasets[0].data.push(8.790);
+            
+            voltageCurrentChart.data.labels.push(timeLabel);
+            voltageCurrentChart.data.datasets[0].data.push(226.190);
+            voltageCurrentChart.data.datasets[1].data.push(0.090);
+
+            // Remove old data points if too many
+            if (powerChart.data.labels.length > 10) {
+                powerChart.data.labels.shift();
+                powerChart.data.datasets[0].data.shift();
+                voltageCurrentChart.data.labels.shift();
+                voltageCurrentChart.data.datasets[0].data.shift();
+                voltageCurrentChart.data.datasets[1].data.shift();
+            }
+
+            // Update charts
+            powerChart.update();
+            voltageCurrentChart.update();
+
+            // Update system status
+            document.getElementById('lightValue').textContent = '0%';
+            document.getElementById('relayValue').textContent = 'OFF';
+            document.getElementById('sourceValue').textContent = 'Command';
+            
+            const updateTime = new Date().toLocaleTimeString();
+            document.getElementById('lightUpdate').textContent = updateTime;
+            document.getElementById('relayUpdate').textContent = updateTime;
+            document.getElementById('sourceUpdate').textContent = updateTime;
+
+            // Hide loading spinner
+            document.querySelector('.loading-spinner').style.display = 'none';
+        }
+
+        // Update dashboard every 5 seconds
+        setInterval(updateDashboard, 5000);
+        updateDashboard(); // Initial update
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            powerChart.resize();
+            voltageCurrentChart.resize();
+        });
+    </script>
+</body>
+</html> 

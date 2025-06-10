@@ -1,0 +1,19 @@
+{
+    "name": "servertest",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "type": "module",
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "description": "",
+    "dependencies": {
+        "cron-parser": "^5.1.1",
+        "lodash": "^4.17.21",
+        "mqtt": "^5.13.1",
+        "node-xlsx": "^0.24.0"
+    }
+}

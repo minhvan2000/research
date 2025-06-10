@@ -1,0 +1,19 @@
+
+### Get a list search users
+POST http://127.0.0.1:5000/api/login HTTP/1.1
+Content-Type: application/json
+
+{
+    "_id": "63be84d3be96a37d8c291b82",
+    "tenantId": "6654671e2c05c255f13dd8f9"
+}
+
+### Get a list search users
+POST http://127.0.0.1:5000/api/add HTTP/1.1
+Content-Type: application/json
+jwt: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2M2JlODRkM2JlOTZhMzdkOGMyOTFiODIiLCJ0ZW5hbnRJZCI6IjY2NTQ2NzFlMmMwNWMyNTVmMTNkZDhmOSIsImlhdCI6MTcxNjg2MjE3NX0.1QgCa0kaAk4keqTjrJpUDn50dIY-8GpeoCigOcd7E-A
+
+{
+    "tenantId": "665472d1ec04858fa1079f45",
+    "email": "admin@gmail.com"
+}

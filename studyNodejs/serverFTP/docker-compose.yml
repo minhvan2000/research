@@ -1,0 +1,13 @@
+version: '3.4'
+
+services:
+    serverftp:
+        image: serverftp
+        build:
+            context: ./
+            dockerfile: ./Dockerfile
+        environment:
+            NODE_ENV: production
+        ports:
+            - '21:21'
+            - '10100-10110:10100-10110'

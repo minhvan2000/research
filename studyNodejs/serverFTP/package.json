@@ -1,0 +1,16 @@
+{
+    "name": "file-executor",
+    "version": "1.0.0",
+    "description": "Example of executing files in Node.js using ES modules",
+    "main": "execute.js",
+    "scripts": {
+        "start": "node execute.js"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "ftp-srv": "^4.6.3",
+        "netmask": "^2.0.2"
+    }
+}

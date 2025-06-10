@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "type": "node-terminal",
+            "name": "Run Script: start",
+            "request": "launch",
+            "command": "http-server ./",
+            "cwd": "${workspaceFolder}/streaming/jsmpeg"
+        },
+        {
+            "name": "Docker Node.js Launch",
+            "type": "docker",
+            "request": "launch",
+            "preLaunchTask": "docker-run: debug",
+            "platform": "node",
+            "node": {
+                "package": "${workspaceFolder}/studyNodejs/serverFTP/package.json",
+                "localRoot": "${workspaceFolder}/studyNodejs/serverFTP"
+            }
+        }
+    ]
+}

@@ -1,0 +1,20 @@
+{
+    "name": "multitenant",
+    "version": "1.0.0",
+    "description": "This project is implemented using a multi-tenant model, aimed at making user management more efficient.",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Minhdv",
+    "license": "ISC",
+    "dependencies": {
+        "cookie-parser": "^1.4.6",
+        "cors": "^2.8.5",
+        "express": "^4.19.2",
+        "jsonwebtoken": "^9.0.2",
+        "lru-cache": "^10.2.2",
+        "mongoose": "^8.4.0"
+    }
+}

@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electrical Monitoring Dashboard</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #2ecc71;
+            --warning-color: #f1c40f;
+            --danger-color: #e74c3c;
+            --light-bg: #f8f9fa;
+            --dark-bg: #343a40;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            background-color: var(--primary-color);
+            color: white;
+            min-height: 100vh;
+            transition: all 0.3s;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                z-index: 1000;
+                width: 250px;
+                transform: translateX(-100%);
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255,255,255,.75);
+            padding: 0.8rem 1rem;
+            transition: all 0.3s;
+            border-radius: 5px;
+            margin: 2px 0;
+        }
+
+        .sidebar .nav-link:hover {
+            color: white;
+            background: rgba(255,255,255,.1);
+        }
+
+        .sidebar .nav-link.active {
+            color: white;
+            background: rgba(255,255,255,.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        @media (min-width: 768px) {
+            .main-content {
+                margin-left: 250px;
+            }
+        }
+
+        /* Cards */
+        .metric-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            margin-bottom: 20px;
+            border: none;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .metric-card.voltage {
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .metric-card.current {
+            border-left: 4px solid var(--success-color);
+        }
+
+        .metric-card.power {
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .metric-card.energy {
+            border-left: 4px solid var(--danger-color);
+        }
+
+        /* Charts */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: none;
+        }
+
+        @media (max-width: 576px) {
+            .chart-container {
+                height: 250px;
+            }
+        }
+
+        /* Status Indicators */
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        .status-indicator.online {
+            background-color: var(--success-color);
+        }
+
+        .status-indicator.offline {
+            background-color: var(--danger-color);
+        }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 1001;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: flex;
+            }
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1002;
+        }
+
+        /* Grid Layout */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Table Styles */
+        .data-table {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+            border: none;
+        }
+
+        .data-table th {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+        }
+
+        .data-table td {
+            vertical-align: middle;
+        }
+
+        /* Alert Styles */
+        .alert-custom {
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Card Icons */
+        .card-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+
+        /* Tooltips */
+        .tooltip {
+            font-size: 0.8rem;
+        }
+
+        /* Badge Styles */
+        .badge {
+            padding: 0.5em 0.8em;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Menu Button -->
+    <button class="btn btn-primary mobile-menu-btn" id="mobileMenuBtn" data-bs-toggle="tooltip" data-bs-placement="right" title="Toggle Menu">
+        <i class="bi bi-list"></i>
+    </button>
+
+    <!-- Loading Spinner -->
+    <div class="spinner-border text-primary loading-spinner" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar p-3" id="sidebar">
+                <div class="d-flex align-items-center mb-4">
+                    <i class="bi bi-lightning-charge-fill me-2" style="font-size: 1.5rem;"></i>
+                    <h3 class="text-white mb-0">Electrical Monitor</h3>
+                </div>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#overview" data-bs-toggle="tooltip" data-bs-placement="right" title="Overview">
+                            <i class="bi bi-speedometer2 me-2"></i> Overview
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#consumption" data-bs-toggle="tooltip" data-bs-placement="right" title="Consumption">
+                            <i class="bi bi-graph-up me-2"></i> Consumption
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#alerts" data-bs-toggle="tooltip" data-bs-placement="right" title="Alerts">
+                            <i class="bi bi-exclamation-triangle me-2"></i> Alerts
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#settings" data-bs-toggle="tooltip" data-bs-placement="right" title="Settings">
+                            <i class="bi bi-gear me-2"></i> Settings
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 main-content">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="mb-0">Electrical Monitoring Dashboard</h2>
+                    <div class="btn-group">
+                        <button class="btn btn-outline-primary" id="exportBtn">
+                            <i class="bi bi-download me-2"></i>Export Data
+                        </button>
+                        <button class="btn btn-outline-primary" id="refreshBtn">
+                            <i class="bi bi-arrow-clockwise me-2"></i>Refresh
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Alerts -->
+                <div class="alert alert-warning alert-custom mb-4" role="alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i> 
+                    System is operating normally. No alerts at this time.
+                </div>
+                
+                <!-- Metrics Grid -->
+                <div class="metrics-grid">
+                    <div class="metric-card voltage">
+                        <div class="card-body">
+                            <i class="bi bi-lightning-charge card-icon text-primary"></i>
+                            <h5 class="card-title">Voltage</h5>
+                            <h2 class="card-text" id="voltage">226.190V</h2>
+                            <p class="text-muted">Current Reading</p>
+                            <div class="d-flex align-items-center">
+                                <span class="status-indicator online"></span>
+                                <small>Connected</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-card current">
+                        <div class="card-body">
+                            <i class="bi bi-lightning card-icon text-success"></i>
+                            <h5 class="card-title">Current</h5>
+                            <h2 class="card-text" id="current">0.090A</h2>
+                            <p class="text-muted">Current Reading</p>
+                            <div class="d-flex align-items-center">
+                                <span class="status-indicator online"></span>
+                                <small>Connected</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-card power">
+                        <div class="card-body">
+                            <i class="bi bi-battery-charging card-icon text-warning"></i>
+                            <h5 class="card-title">Power</h5>
+                            <h2 class="card-text" id="power">8.790W</h2>
+                            <p class="text-muted">Current Reading</p>
+                            <div class="d-flex align-items-center">
+                                <span class="status-indicator online"></span>
+                                <small>Connected</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-card energy">
+                        <div class="card-body">
+                            <i class="bi bi-battery-full card-icon text-danger"></i>
+                            <h5 class="card-title">Energy</h5>
+                            <h2 class="card-text" id="energy">0.000kWh</h2>
+                            <p class="text-muted">Total Consumption</p>
+                            <div class="d-flex align-items-center">
+                                <span class="status-indicator online"></span>
+                                <small>Connected</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="chart-container">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0">Power Consumption Trend</h5>
+                                <div class="btn-group">
+                                    <button class="btn btn-sm btn-outline-secondary active" data-period="hour">1H</button>
+                                    <button class="btn btn-sm btn-outline-secondary" data-period="day">1D</button>
+                                    <button class="btn btn-sm btn-outline-secondary" data-period="week">1W</button>
+                                </div>
+                            </div>
+                            <canvas id="powerChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="chart-container">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0">Voltage & Current</h5>
+                                <div class="btn-group">
+                                    <button class="btn btn-sm btn-outline-secondary active" data-period="hour">1H</button>
+                                    <button class="btn btn-sm btn-outline-secondary" data-period="day">1D</button>
+                                    <button class="btn btn-sm btn-outline-secondary" data-period="week">1W</button>
+                                </div>
+                            </div>
+                            <canvas id="voltageCurrentChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Energy Consumption Table -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="data-table">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Time</th>
+                                            <th>Voltage (V)</th>
+                                            <th>Current (A)</th>
+                                            <th>Power (W)</th>
+                                            <th>Energy (kWh)</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="consumptionTable">
+                                        <!-- Data will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        // Initialize tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+        // Mobile menu toggle
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(event.target) && 
+                !mobileMenuBtn.contains(event.target)) {
+                sidebar.classList.remove('active');
+            }
+        });
+
+        // Initialize charts
+        const powerCtx = document.getElementById('powerChart').getContext('2d');
+        const voltageCurrentCtx = document.getElementById('voltageCurrentChart').getContext('2d');
+
+        const powerChart = new Chart(powerCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Power (W)',
+                    data: [],
+                    borderColor: '#f1c40f',
+                    backgroundColor: 'rgba(241, 196, 15, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        const voltageCurrentChart = new Chart(voltageCurrentCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                    {
+                        label: 'Voltage (V)',
+                        data: [],
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'Current (A)',
+                        data: [],
+                        borderColor: '#2ecc71',
+                        backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Simulate real-time data updates
+        function updateDashboard() {
+            // Show loading spinner
+            document.querySelector('.loading-spinner').style.display = 'block';
+
+            // Update metrics
+            const voltage = (220 + Math.random() * 10).toFixed(3);
+            const current = (Math.random() * 0.2).toFixed(3);
+            const power = (voltage * current).toFixed(3);
+            const energy = (parseFloat(document.getElementById('energy').textContent) + parseFloat(power) / 3600).toFixed(3);
+
+            document.getElementById('voltage').textContent = `${voltage}V`;
+            document.getElementById('current').textContent = `${current}A`;
+            document.getElementById('power').textContent = `${power}W`;
+            document.getElementById('energy').textContent = `${energy}kWh`;
+
+            // Update charts
+            const now = new Date();
+            const timeLabel = now.toLocaleTimeString();
+            
+            // Add new data points
+            powerChart.data.labels.push(timeLabel);
+            powerChart.data.datasets[0].data.push(power);
+            
+            voltageCurrentChart.data.labels.push(timeLabel);
+            voltageCurrentChart.data.datasets[0].data.push(voltage);
+            voltageCurrentChart.data.datasets[1].data.push(current);
+
+            // Remove old data points if too many
+            if (powerChart.data.labels.length > 10) {
+                powerChart.data.labels.shift();
+                powerChart.data.datasets[0].data.shift();
+                voltageCurrentChart.data.labels.shift();
+                voltageCurrentChart.data.datasets[0].data.shift();
+                voltageCurrentChart.data.datasets[1].data.shift();
+            }
+
+            // Update charts
+            powerChart.update();
+            voltageCurrentChart.update();
+
+            // Update consumption table
+            const tableBody = document.getElementById('consumptionTable');
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>${timeLabel}</td>
+                <td>${voltage}V</td>
+                <td>${current}A</td>
+                <td>${power}W</td>
+                <td>${energy}kWh</td>
+                <td><span class="badge bg-success">Normal</span></td>
+            `;
+            tableBody.insertBefore(newRow, tableBody.firstChild);
+            
+            // Keep only last 10 rows
+            while (tableBody.children.length > 10) {
+                tableBody.removeChild(tableBody.lastChild);
+            }
+
+            // Hide loading spinner
+            document.querySelector('.loading-spinner').style.display = 'none';
+        }
+
+        // Update dashboard every 5 seconds
+        setInterval(updateDashboard, 5000);
+        updateDashboard(); // Initial update
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            powerChart.resize();
+            voltageCurrentChart.resize();
+        });
+
+        // Export button functionality
+        document.getElementById('exportBtn').addEventListener('click', function() {
+            const data = {
+                voltage: document.getElementById('voltage').textContent,
+                current: document.getElementById('current').textContent,
+                power: document.getElementById('power').textContent,
+                energy: document.getElementById('energy').textContent,
+                timestamp: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `electrical-data-${new Date().toISOString()}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+
+        // Refresh button functionality
+        document.getElementById('refreshBtn').addEventListener('click', function() {
+            updateDashboard();
+        });
+
+        // Chart period buttons
+        document.querySelectorAll('.btn-group .btn').forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons in the group
+                this.parentElement.querySelectorAll('.btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                // Add active class to clicked button
+                this.classList.add('active');
+                // Here you would typically update the chart data based on the selected period
+            });
+        });
+    </script>
+</body>
+</html> 

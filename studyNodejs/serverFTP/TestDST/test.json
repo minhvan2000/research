@@ -1,0 +1,93 @@
+[
+    {
+        "app": "GENERAL",
+        "device": "System",
+        "cmd": "Test Data",
+        "infor": [{"mode": "Message", "length": 11}],
+        "description": [
+            { "parameter": "DevEUI", "access": ["Message"], "valid": {"adapt": ["60C5A8FF", "AC1F09FF"], "error": "INVALID"}, "attribute": [{"type": "H", "size": 16}] },
+            { "parameter": "Firmware VER", "access": ["Message"], "valid": {"adapt": ["2.3.4"], "error": "INVALID"}, "format": "%u.%u.%u", "attribute": [{"type": "b", "size": 4}, {"type": "b", "size": 4}, {"type": "b", "size": 4}] },
+            { "parameter": "Hardware VER", "access": ["Message"], "valid": {"adapt": ["3.1.0"], "error": "INVALID"}, "format": "%u.%u.%u", "attribute": [{"type": "b", "size": 4}, {"type": "b", "size": 4}, {"type": "b", "size": 4}] }
+        ]
+    },
+    {
+        "app": "GENERAL",
+        "device": "GPS",
+        "cmd": "Test Data",
+        "infor": [
+            {"mode": "Message", "length":8}
+        ],
+        "description": [
+            {"parameter": "Location", "access": ["Message"], "valid":{"location":{ "long":10.8,"lat":10.8,"range":500},"error":"MEA"},"format": "{\"long\": %lf, \"lat\": %lf}", "attribute": [{"type": "S", "size": 4, "formular": "a/1000000"}, {"type": "S", "size": 4, "formular": "a/1000000"}] }
+        ]
+    },
+    {
+        "app": "GENERAL",
+        "device": "Accelerometer",
+        "cmd": "Test Data",
+        "infor": [
+            {"mode": "Message", "length":1}
+        ],
+        "description": [
+            {"parameter": "Sensibility", "access": ["Message"], "valid":{"range":[11,20],"error":"SEN"},"attribute": [{"type": "U", "size": 1}] }
+        ]
+    },
+    {
+        "app": "GENERAL",
+        "device": "Battery",
+        "cmd": "Test Data",
+        "infor": [
+            {"mode": "Message", "length":2}
+        ],
+        "description": [
+            {"parameter": "Voltage", "access": ["Message"], "valid":{"expect":[3500,10],"error":"MEA"},"attribute": [{"type": "U", "size": 2}] }
+        ]
+    },
+    {
+        "app": "GENERAL",
+        "device": "Memory",
+        "cmd": "Test Data",
+        "infor": [
+            {"mode": "Message", "length":1}
+        ],
+        "description": [
+            {"parameter": "Status", "access": ["Message"], "valid":{"range":[0,0],"error":"MEM"},"attribute": [{"type": "U", "size": 1}] }
+        ]
+    },
+    {
+        "app": "GENERAL",
+        "device": "Distance",
+        "cmd": "Test Data",
+        "infor": [
+            {"mode": "Message", "length":4}
+        ],
+        "description": [
+            {"parameter": "Distance", "access": ["Message"], "valid":{"expect":[3500,10],"error":"MEA"},"format": "%.01f", "attribute": [{"type": "F", "size": 1}] }
+        ]
+    },
+    {
+        "app": "GENERAL",
+        "device": "BLE",
+        "cmd": "Data",
+        "infor": [
+            {"mode": "Message", "length":1}
+        ],
+        "description": [
+            {"parameter": "Num of BLE Device", "access": ["Message"], "attribute": [{"type": "U", "size": 1}] }
+        ]
+    },
+	{
+		"app": "GENERAL",
+		"device": "BLE",
+		"cmd": "Setting",
+		"infor": [
+			{"mode": "Read", "length":0},
+			{"mode": "Write", "length":1},
+			{"mode": "Response", "length":1}
+		],
+		"description": [
+			{"parameter": "Request Scan", "access": ["Write", "Response"], "attribute": [{"type": "b", "size": 1, "enum": "onoff"}] },
+			{"parameter": "Reserve", "access": ["Write", "Response"], "option": ["ignore"], "attribute": [{"type": "b", "size": 7}] }
+		]
+	  }
+]

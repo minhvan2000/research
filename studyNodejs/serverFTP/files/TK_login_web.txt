@@ -1,0 +1,18 @@
+TK admin:
+tk: admin123@gmail.com
+pass: \DfMEng/@*#&2021
+
+-----------
+TK test 1:
+tk: rsotdm.kh@gmail.com
+pass: rssotdm@123
+
+-----------
+TK test 2:
+tk: demo.dfmvn@gmail.com
+pass: demodfmvn@123
+
+-----------
+TK test Bàu Bàng:
+tthcbaubang@gmail.com
+pass: tthcbaubang@123
