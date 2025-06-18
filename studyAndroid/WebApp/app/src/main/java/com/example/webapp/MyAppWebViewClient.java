@@ -19,7 +19,7 @@ public class MyAppWebViewClient extends WebViewClient {
 
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, String url) {
-        if(Uri.parse(url).getHost().endsWith("192.168.30.213")) {
+        if(Uri.parse(url).getHost().endsWith("orange-business.com")) {
             return false;
         }
 

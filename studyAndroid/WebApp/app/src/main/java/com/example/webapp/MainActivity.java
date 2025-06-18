@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         webSettings.setAllowFileAccess(true);
         webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
         webSettings.setDomStorageEnabled(true);
-//        webSettings.setLoadWithOverviewMode(true);
+        webSettings.setLoadWithOverviewMode(true);
         webSettings.setUseWideViewPort(true);
         webSettings.setLoadsImagesAutomatically(true);
 
@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         // Stop local links and redirects from opening in browser instead of WebView
         myWeb.setWebViewClient(new MyAppWebViewClient());
     
-        myWeb.loadUrl("http://192.168.30.213");
+        myWeb.loadUrl("https://liveobjects.orange-business.com/");
 //        myWeb.loadUrl("file:///android_asset/www/index.html");
 
     }
