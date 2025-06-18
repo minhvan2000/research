@@ -1,0 +1,35 @@
+@host={{$dotenv APP_HOST}}:{{$dotenv APP_PORT}}
+
+@url_dev=http://{{host}}/v1/api/user
+
+@accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NjQ5OGRlOWJlZDZiYzcwMTgzMTQ2NjYiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsImlhdCI6MTcxNjExMjkxNywiZXhwIjoxNzE2MzcyMTE3fQ.-A6T7lsqcHJxGrfI4An4IVYES-iCfe52mSbpXfMn_o8
+
+@userId=66498de9bed6bc7018314666
+
+### Get a list search users
+GET {{url_dev}}/search/Minh HTTP/1.1
+x-client-id: {{userId}}
+authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+### Get a single user
+GET {{url_dev}}/66498de9bed6bc7018314666 HTTP/1.1
+x-client-id: {{userId}}
+authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+### Get all user
+GET {{url_dev}}?limit=20&page=1 HTTP/1.1
+x-client-id: {{userId}}
+authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+### Update a single user
+PATCH {{url_dev}}/66498de9bed6bc7018314666 HTTP/1.1
+x-client-id: {{userId}}
+authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+    "isDelete": true
+}

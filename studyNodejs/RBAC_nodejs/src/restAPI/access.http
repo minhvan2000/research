@@ -1,0 +1,65 @@
+@host={{$dotenv APP_HOST}}:{{$dotenv APP_PORT}}
+
+@url_dev=http://{{host}}/v1/api/auth
+
+@accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NjQ5OGRlOWJlZDZiYzcwMTgzMTQ2NjYiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsImlhdCI6MTcxNjExMjkxNywiZXhwIjoxNzE2MzcyMTE3fQ.-A6T7lsqcHJxGrfI4An4IVYES-iCfe52mSbpXfMn_o8
+
+### Register
+POST  {{url_dev}}/register HTTP/1.1
+Content-Type: application/json
+
+{
+    "fullName": "Minh Blue",
+    "email": "user@gmail.com",
+    "password": "User@123",
+    "confirmPassword": "User@123"
+}
+
+### Login
+POST {{url_dev}}/login HTTP/1.1
+Content-Type: application/json
+
+{
+    "email": "admin@gmail.com",
+    "password": "Admin@123"
+}
+
+### Forgot Password
+POST {{url_dev}}/forgot-password HTTP/1.1
+Content-Type: application/json
+
+{
+    "email": "admin@gmail.com"
+}
+
+### Change Password
+POST {{url_dev}}/reset-password/18a8c88aeb7e3bdb0ffb347cca98dc549e128980bc58a9cb37e30f18057e8985a54252e1ffdf45f0083b5bdcbafb6d6ed19175dc4876802be821f3c8faa967ce HTTP/1.1
+Content-Type: application/json
+
+{
+    "password": "minhdv@123",
+    "confirmPassword": "minhdv@123"
+}
+
+# ### Logout
+# POST  {{url_dev}}/logout HTTP/1.1
+# Content-Type: application/json
+# authorization: Bearer {{accessToken}}
+
+# ### Refresh Token
+# POST  {{url_dev}}/handler-refresh-token HTTP/1.1
+# Content-Type: application/json
+# authorization: {{accessToken}}
+# x-token-id: {{refreshToken}}
+
+
+
+
+# ### Change Password
+# POST  {{url_dev}}/reset-password/18a8c88aeb7e3bdb0ffb347cca98dc549e128980bc58a9cb37e30f18057e8985a54252e1ffdf45f0083b5bdcbafb6d6ed19175dc4876802be821f3c8faa967ce HTTP/1.1
+# Content-Type: application/json
+
+# {
+#     "password": "minhdv@123",
+#     "confirmPassword": "minhdv@123"
+# }

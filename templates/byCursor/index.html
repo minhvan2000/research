@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link href="assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <div id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <h3 class="mb-0">Menu</h3>
+                <button id="sidebarCollapse" class="btn btn-link p-0">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="fas fa-microchip"></i>
+                        <span>Devices</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="fas fa-bolt"></i>
+                        <span>Energy</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="fas fa-users"></i>
+                        <span>Users</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                    <ul class="nav flex-column ps-3">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-user"></i>
+                                <span>Profile</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>Security</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div id="mainContent" class="main-content">
+            <!-- Header -->
+            <header class="navbar navbar-expand-lg">
+                <div class="container-fluid">
+                    <div class="d-flex align-items-center">
+                        <button id="sidebarToggle" class="btn btn-link me-3">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="d-flex align-items-center">
+                        <!-- Notifications -->
+                        <div class="dropdown me-3 position-relative">
+                            <button class="btn btn-link" type="button" id="notificationsDropdown" data-bs-toggle="dropdown">
+                                <i class="fas fa-bell"></i>
+                                <span class="badge bg-danger">3</span>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end notification-dropdown">
+                                <div class="notification-item unread" data-id="1">
+                                    <div class="notification-content">
+                                        <p class="mb-0">New device connected</p>
+                                        <small class="text-muted">2 minutes ago</small>
+                                    </div>
+                                </div>
+                                <div class="notification-item unread" data-id="2">
+                                    <div class="notification-content">
+                                        <p class="mb-0">High energy consumption alert</p>
+                                        <small class="text-muted">15 minutes ago</small>
+                                    </div>
+                                </div>
+                                <div class="notification-item" data-id="3">
+                                    <div class="notification-content">
+                                        <p class="mb-0">System update completed</p>
+                                        <small class="text-muted">1 hour ago</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Language Selection -->
+                        <div class="dropdown me-3">
+                            <button class="btn btn-link" type="button" id="languageDropdown" data-bs-toggle="dropdown">
+                                <img src="assets/img/en.png" alt="English" class="flag-icon">
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <a class="dropdown-item" href="#">
+                                    <img src="assets/img/en.png" alt="English" class="flag-icon me-2"> English
+                                </a>
+                                <a class="dropdown-item" href="#">
+                                    <img src="assets/img/fr.png" alt="French" class="flag-icon me-2"> French
+                                </a>
+                                <a class="dropdown-item" href="#">
+                                    <img src="assets/img/de.png" alt="German" class="flag-icon me-2"> German
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Theme Switch -->
+                        <div class="theme-switch-wrapper me-3">
+                            <label class="theme-switch">
+                                <input type="checkbox" id="themeToggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <!-- User Profile -->
+                        <div class="dropdown">
+                            <button class="btn btn-link d-flex align-items-center" type="button" id="userDropdown" data-bs-toggle="dropdown">
+                                <img src="assets/img/avatar.jpg" alt="User" class="rounded-circle me-2">
+                                <span>John Doe</span>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i> Profile</a>
+                                <a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i> Settings</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i> Logout</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content Area -->
+            <div class="container-fluid py-4">
+                <!-- Stats Cards -->
+                <div class="row mb-4">
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-primary shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                            Total Devices</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalDevices">42</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-microchip fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-success shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                            Energy Consumption</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800" id="energyConsumption">1560 kWh</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-bolt fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-info shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                            Active Users</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800" id="activeUsers">15</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-warning shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                            Alerts</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalAlerts">8</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-bell fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="row">
+                    <!-- Energy Consumption Chart -->
+                    <div class="col-xl-8 col-lg-7">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Energy Consumption Overview</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-area">
+                                    <canvas id="energyChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Device Status Chart -->
+                    <div class="col-xl-4 col-lg-5">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Device Status</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-pie">
+                                    <canvas id="deviceStatusChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Charts -->
+                <div class="row">
+                    <!-- Device Usage Chart -->
+                    <div class="col-xl-6 col-lg-6">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Device Usage</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-area">
+                                    <canvas id="barChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Alerts Distribution Chart -->
+                    <div class="col-xl-6 col-lg-6">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Alerts Distribution</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-area">
+                                    <canvas id="columnChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Alerts Table -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Recent Alerts</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Device</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="alertsTableBody">
+                                    <!-- Alerts will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script src="assets/js/main.js"></script>
+</body>
+</html> 

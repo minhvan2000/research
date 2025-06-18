@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Power Button with Dark Mode</title>
+        <style>
+            :root {
+                --bg-color: #f9f9f9;
+                --text-color: #666;
+                --button-bg: radial-gradient(circle, #eee 30%, #ccc 100%);
+                --button-border: #ddd;
+                --button-text: #666;
+                --indicator-on: orange;
+                --indicator-off: #aaa;
+            }
+
+            body.dark {
+                --bg-color: #121212;
+                --text-color: #ddd;
+                --button-bg: radial-gradient(circle, #333 30%, #222 100%);
+                --button-border: #555;
+                --button-text: #eee;
+                --indicator-on: #ffa500;
+                --indicator-off: #555;
+            }
+
+            body {
+                margin: 0;
+                padding: 0;
+                background: var(--bg-color);
+                font-family: Arial, sans-serif;
+                color: var(--text-color);
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                transition: background 0.3s, color 0.3s;
+            }
+
+            .dark-toggle {
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+                background: var(--button-border);
+                color: var(--text-color);
+                border: none;
+                padding: 0.5rem 1rem;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 1rem;
+                transition: background 0.3s;
+            }
+
+            .dark-toggle:hover {
+                background: #888;
+            }
+
+            .button-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .round-button {
+                width: 200px;
+                height: 200px;
+                background: var(--button-bg);
+                border: 6px solid var(--button-border);
+                border-radius: 50%;
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+                position: relative;
+                cursor: pointer;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                transition: all 0.3s ease-in-out;
+            }
+
+            .round-button span {
+                font-size: 2rem;
+                font-weight: bold;
+                color: var(--button-text);
+            }
+
+            .indicator {
+                width: 14px;
+                height: 14px;
+                background: var(--indicator-on);
+                border-radius: 50%;
+                position: absolute;
+                bottom: 20px;
+                transition: background 0.3s;
+            }
+
+            .label {
+                margin-top: 1rem;
+                font-size: 1.2rem;
+                color: var(--text-color);
+            }
+
+            @media (max-width: 768px) {
+                .round-button {
+                    width: 150px;
+                    height: 150px;
+                }
+
+                .round-button span {
+                    font-size: 1.5rem;
+                }
+
+                .label {
+                    font-size: 1rem;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .round-button {
+                    width: 120px;
+                    height: 120px;
+                }
+
+                .round-button span {
+                    font-size: 1.2rem;
+                }
+
+                .label {
+                    font-size: 0.9rem;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <button class="dark-toggle" onclick="toggleDarkMode()">
+            🌙 Dark Mode
+        </button>
+
+        <div class="button-container">
+            <div class="round-button" onclick="togglePower()" id="powerButton">
+                <span id="buttonText">ON</span>
+                <div class="indicator" id="indicator"></div>
+            </div>
+            <div class="label" id="statusLabel">Power ON</div>
+        </div>
+
+        <script>
+            function togglePower() {
+                const text = document.getElementById('buttonText');
+                const indicator = document.getElementById('indicator');
+                const label = document.getElementById('statusLabel');
+
+                const isOn = text.innerText === 'ON';
+
+                if (isOn) {
+                    text.innerText = 'OFF';
+                    indicator.style.background = getComputedStyle(document.body)
+                        .getPropertyValue('--indicator-off')
+                        .trim();
+                    label.innerText = 'Power OFF';
+                    updateURL('off');
+                } else {
+                    text.innerText = 'ON';
+                    indicator.style.background = getComputedStyle(document.body)
+                        .getPropertyValue('--indicator-on')
+                        .trim();
+                    label.innerText = 'Power ON';
+                    updateURL('on');
+                }
+            }
+
+            function updateURL(state) {
+                window.location.href = state;
+            }
+
+            function toggleDarkMode() {
+                document.body.classList.toggle('dark');
+
+                if (document.getElementsByClassName('dark')[0]) {
+                    updateURL('dark');
+                } else {
+                    updateURL('light');
+                }
+            }
+
+            // Load correct state from URL on refresh
+            window.addEventListener('DOMContentLoaded', () => {
+                const lastSegment = window.location.pathname.split('/').pop();
+                const text = document.getElementById('buttonText');
+                const indicator = document.getElementById('indicator');
+                const label = document.getElementById('statusLabel');
+
+                switch (lastSegment) {
+                    case 'off':
+                        text.innerText = 'OFF';
+                        indicator.style.background = getComputedStyle(
+                            document.body
+                        )
+                            .getPropertyValue('--indicator-off')
+                            .trim();
+                        label.innerText = 'Power OFF';
+                        break;
+                    case 'on':
+                        text.innerText = 'ON';
+                        indicator.style.background = getComputedStyle(
+                            document.body
+                        )
+                            .getPropertyValue('--indicator-on')
+                            .trim();
+                        label.innerText = 'Power ON';
+                        break;
+                    // case 'light':
+                    // case 'dark':
+                    //     toggleDarkMode();
+                    //     break;
+
+                    default:
+                        break;
+                }
+            });
+        </script>
+    </body>
+</html>
