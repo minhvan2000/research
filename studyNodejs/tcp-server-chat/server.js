@@ -31,6 +31,23 @@ const broadcast = (client, message) => {
     socket.write(message);
 };
 
+const clientConnect = net.createConnection({ port: 3333 }, () => {
+    // 'connect' listener.
+    console.log('connected to server!');
+    clientConnect.write('world!\r\n');
+    // rl.on('line', (input) => {
+    //     client.write(input);
+    // });
+});
+
+clientConnect.on('data', (data) => {
+    console.log('data.toString()', data.toString());
+});
+
+clientConnect.on('end', () => {
+    console.log('disconnected from server');
+});
+
 server.on('connection', (client) => {
     console.log('A new client connection');
     const numberTime = Date.now();
@@ -48,7 +65,7 @@ server.on('connection', (client) => {
         console.log('messageBuffer::', message);
         console.log('messageUTF8::', message.toString('utf8'));
         console.log('\n');
-        broadcast(clientName, message);
+        // broadcast(clientName, message);
     });
 
     client.on('end', () => {
@@ -63,12 +80,20 @@ server.on('connection', (client) => {
 });
 
 rl.on('line', (input) => {
-    const splitInputs = input.split(':');
+    const splitInputs = input.split(':::');
     const clientSend = splitInputs[0].trim();
 
-    const socket = sockets.find((val) => val.nickname === clientSend);
+    if (clientSend === 'serverTCP') {
+        clientConnect.write(splitInputs[1].trim());
+    } else if (!clientSend) {
+        for (const item of sockets) {
+            item.write(splitInputs[1].trim());
+        }
+    } else {
+        const socket = sockets.find((val) => val.nickname === clientSend);
 
-    socket.write(splitInputs[1].trim());
+        socket.write(splitInputs[1].trim());
+    }
 });
 
 server.on('error', (err) => {
