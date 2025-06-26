@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.ems"
-    compileSdk = 24
+    namespace = "com.example.testandroid"
+    compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.ems"
+        applicationId = "com.example.testandroid"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
@@ -26,21 +26,13 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = VERSION_1_8
-        targetCompatibility = VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
-    buildFeatures {
-        viewBinding = true
-    }
-    dependenciesInfo {
-        includeInApk = true
-    }
-    buildToolsVersion = "24.0.0"
 }
 
 dependencies {
 
-    implementation("androidx.webkit:webkit:1.8.0")
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)

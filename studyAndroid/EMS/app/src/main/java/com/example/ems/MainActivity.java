@@ -2,10 +2,8 @@ package com.example.ems;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.PackageInfo;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.webkit.CookieManager;
